@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "slug": "cloud-proxy-client",
   "description": "Удаленный доступ для HA в Туркменистане",
-  "arch": ["armhf", "armv7", "aarch64", "amd64"],
+  "arch": ["aarch64", "amd64"],
   "startup": "services",
   "boot": "auto",
   "options": {
