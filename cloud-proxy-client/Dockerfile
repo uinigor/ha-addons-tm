@@ -1,8 +1,7 @@
-ARG BUILD_FROM=homeassistant/amd64-base:latest
-FROM $BUILD_FROM
+FROM alpine:latest
 
-# Установка зависимостей
-RUN apk add --no-cache jq wget
+# Установка bash, wget, jq и библиотек совместимости
+RUN apk add --no-cache jq wget bash libc6-compat
 
 # Автоматическое определение архитектуры и скачивание frpc 0.58.1
 RUN ARCH=$(uname -m) && \
