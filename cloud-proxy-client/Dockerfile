@@ -1,7 +1,7 @@
-FROM alpine:latest
+ARG BUILD_FROM
+FROM $BUILD_FROM
 
-# Установка bash, wget, jq и библиотек совместимости
-RUN apk add --no-cache jq wget bash libc6-compat
+RUN apk add --no-cache jq wget
 
 # Автоматическое определение архитектуры и скачивание frpc 0.58.1
 RUN ARCH=$(uname -m) && \
@@ -9,7 +9,7 @@ RUN ARCH=$(uname -m) && \
     elif [ "$ARCH" = "aarch64" ]; then FRP_ARCH="arm64"; \
     elif [ "$ARCH" = "armv7l" ]; then FRP_ARCH="arm"; \
     else FRP_ARCH="amd64"; fi && \
-    wget https://github.com/fatedier/frp/releases/download/v0.58.1/frp_0.58.1_linux_${FRP_ARCH}.tar.gz && \
+    wget --no-check-certificate https://github.com/fatedier/frp/releases/download/v0.58.1/frp_0.58.1_linux_${FRP_ARCH}.tar.gz && \
     tar -xzf frp_0.58.1_linux_${FRP_ARCH}.tar.gz && \
     mv frp_0.58.1_linux_${FRP_ARCH}/frpc /usr/bin/frpc && \
     chmod +x /usr/bin/frpc && \
