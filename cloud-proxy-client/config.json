@@ -1,6 +1,6 @@
 {
   "name": "Cloud Proxy Client (TM)",
-  "version": "1.0.2",
+  "version": "1.0.6",
   "slug": "cloud-proxy-client",
   "description": "Удаленный доступ для HA в Туркменистане",
   "arch": ["aarch64", "amd64"],
