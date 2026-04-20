@@ -1,30 +1,35 @@
-#!/bin/bash
+#!/usr/bin/with-contenv bashio
 
-# Чтение токена и домена напрямую из файла настроек аддона
-TOKEN=$(jq -r '.token' /data/options.json)
-DOMAIN=$(jq -r '.custom_domain' /data/options.json)
+# 1. Читаем токен через bashio (безопасный способ для HA)
+TOKEN=$(bashio::config 'token')
 
-# Адрес вашего сервера (проверьте, 144 или 211!)
+# 2. Настройки твоего сервера
 SERVER_ADDR="192.168.1.211"
 SERVER_PORT=7000
 
-echo "Запуск Cloud Proxy TM..."
-echo "Домен: ${DOMAIN}"
+bashio::log.info "Запуск Cloud Proxy TM..."
 
-# Генерация конфига
+# 3. Генерация конфига в формате TOML
 cat <<EOF > /tmp/frpc.toml
 serverAddr = "${SERVER_ADDR}"
 serverPort = ${SERVER_PORT}
-auth.method = "token"
-auth.token = "${TOKEN}"
+
+[auth]
+method = "token"
+token = ""
 
 [[proxies]]
-name = "ha-access-${DOMAIN}"
+name = "ha-client-proxy"
 type = "http"
 localIP = "127.0.0.1"
 localPort = 8123
-customDomains = ["${DOMAIN}"]
+# Используем временный домен, сервер сам его подменит на правильный из базы
+customDomains = ["temporary.ha.local"]
+# Передаем реальный токен в метаданных
+metas.authToken = "${TOKEN}"
 EOF
 
-echo "Конфигурация готова. Подключаемся к серверу ${SERVER_ADDR}..."
+bashio::log.info "Подключение к серверу ${SERVER_ADDR}..."
+
+# 4. Запуск frpc
 exec /usr/bin/frpc -c /tmp/frpc.toml
