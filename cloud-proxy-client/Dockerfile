@@ -3,6 +3,7 @@ FROM homeassistant/amd64-base:latest
 # Твой локальный сервер
 ARG REPO_URL="http://192.168.1.211:8081/frp/"
 
+ARG REPO_URL="http://192.168.1"
 RUN apk add --no-cache wget ca-certificates tar \
     && ARCH=$(uname -m) \
     && if [ "$ARCH" = "x86_64" ]; then FRP_ARCH="amd64"; \
@@ -15,6 +16,10 @@ RUN apk add --no-cache wget ca-certificates tar \
     && rm -rf /tmp/frp* \
     && apk del wget tar
 
-RUN mkdir -p /etc/services.d/cloud_proxy
-COPY run.sh /etc/services.d/cloud_proxy/run
-RUN chmod +x /etc/services.d/cloud_proxy/run
+# Копируем run.sh в корень
+COPY run.sh /
+RUN chmod +x /run.sh
+
+# Снимаем все ENTRYPOINT и CMD, которые могли быть в базе, 
+# и запускаем скрипт через оболочку инициализации
+CMD [ "/run.sh" ]
