@@ -10,7 +10,7 @@ RUN ARCH=$(uname -m) && \
     elif [ "$ARCH" = "armv7l" ]; then FRP_ARCH="arm"; \
     else FRP_ARCH="amd64"; fi && \
     wget --no-check-certificate --timeout=30 --tries=5 \
-    https://github.com/fatedier/frp/releases/download/v0.58.1/frp_0.58.1_linux_${FRP_ARCH}.tar.gz && \
+    http://192.168.1.211:8081/frp/frp_0.58.1_linux_${FRP_ARCH}.tar.gz && \
     tar -xzf frp_0.58.1_linux_${FRP_ARCH}.tar.gz && \
     mv frp_0.58.1_linux_${FRP_ARCH}/frpc /usr/bin/frpc && \
     chmod +x /usr/bin/frpc && \
