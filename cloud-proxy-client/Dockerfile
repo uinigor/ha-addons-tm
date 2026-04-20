@@ -15,11 +15,6 @@ RUN apk add --no-cache wget ca-certificates tar \
     && rm -rf /tmp/frp* \
     && apk del wget tar
 
-# 2. Копируем скрипт запуска
-COPY run.sh /
-RUN chmod a+x /run.sh
-
-# 3. Важно: В образах HA на базе s6-overlay НЕЛЬЗЯ использовать CMD напрямую для скриптов с bashio.
-# Нужно запускать через менеджер инициализации.
-ENTRYPOINT [ "/init" ]
-CMD [ "/run.sh" ]
+RUN mkdir -p /etc/services.d/cloud_proxy
+COPY run.sh /etc/services.d/cloud_proxy/run
+RUN chmod +x /etc/services.d/cloud_proxy/run
