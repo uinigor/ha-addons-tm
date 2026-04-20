@@ -1,6 +1,6 @@
 {
   "name": "Cloud Proxy Client (TM)",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "slug": "cloud-proxy-client",
   "description": "Удаленный доступ для HA (Локальный репозиторий)",
   "arch": ["aarch64", "amd64"],
