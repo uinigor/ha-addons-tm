@@ -3,7 +3,6 @@ FROM homeassistant/amd64-base:latest
 # Твой локальный сервер
 ARG REPO_URL="http://192.168.1.211:8081/frp/"
 
-ARG REPO_URL="http://192.168.1"
 RUN apk add --no-cache wget ca-certificates tar \
     && ARCH=$(uname -m) \
     && if [ "$ARCH" = "x86_64" ]; then FRP_ARCH="amd64"; \
