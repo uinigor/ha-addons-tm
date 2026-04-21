@@ -1,4 +1,4 @@
-FROM homeassistant/amd64-addon-debian:latest
+FROM homeassistant/amd64-base:latest
 
 # Твой локальный сервер
 ARG REPO_URL="http://192.168.1.211:8081/frp/"
@@ -13,11 +13,13 @@ RUN apt-get update && apt-get install -y wget ca-certificates \
     && mv /tmp/frp_0.58.1_linux_${FRP_ARCH}/frpc /usr/bin/frpc \
     && chmod +x /usr/bin/frpc \
     && rm -rf /tmp/frp* \
-    && apt-get purge -y wget && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
+    && apk del wget tar
 
-# Копируем скрипт запуска в корень
+# Копируем скрипт запуска
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-# В Debian образах HA именно такой запуск является стандартом
+# ВАЖНО: В образах HA на базе s6-overlay скрипт запуска 
+# ДОЛЖЕН вызываться через CMD без указания ENTRYPOINT
+ENTRYPOINT []
 CMD [ "/run.sh" ]
