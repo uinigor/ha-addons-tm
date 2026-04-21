@@ -4,7 +4,7 @@ FROM homeassistant/amd64-base:latest
 ARG REPO_URL="http://192.168.1.211:8081/frp/"
 
 # 1. Используем apk вместо apt-get
-RUN apk add --no-cache wget ca-certificates tar \
+RUN apk add --no-cache wget ca-certificates tar grep \
     && ARCH=$(uname -m) \
     && if [ "$ARCH" = "x86_64" ]; then FRP_ARCH="amd64"; \
        elif [ "$ARCH" = "aarch64" ]; then FRP_ARCH="arm64"; \
