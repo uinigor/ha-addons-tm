@@ -3,23 +3,25 @@
 # Читаем токен
 TOKEN=$(grep -oP '(?<="token": ")[^"]*' /data/options.json)
 
-echo "[Info] Настройка Cloud Proxy TM..."
+echo "[Info] Настройка Cloud Proxy TM (YAML mode)..."
 
-# Используем Inline Table для metas — это решает проблему "unknown field"
-cat <<EOF > /tmp/frpc.toml
-serverAddr = "192.168.1.211"
-serverPort = 7000
+# Генерируем YAML конфиг
+cat <<EOF > /tmp/frpc.yaml
+serverAddr: "192.168.1.211"
+serverPort: 7000
 
-[[proxies]]
-name = "ha-proxy"
-type = "http"
-localIP = "172.30.32.1"
-localPort = 8123
-customDomains = ["client.ha.local"]
-metas = { authToken = "${TOKEN}" }
+proxies:
+  - name: "ha-proxy"
+    type: "http"
+    localIP: "172.30.32.1"
+    localPort: 8123
+    customDomains:
+      - "client.ha.local"
+    metas:
+      authToken: "${TOKEN}"
 EOF
 
-echo "[Info] Соединение с сервером..."
+echo "[Info] Подключение к серверу..."
 
-# Запуск
-exec /usr/bin/frpc -c /tmp/frpc.toml
+# Запуск с указанием YAML конфига
+exec /usr/bin/frpc -c /tmp/frpc.yaml
