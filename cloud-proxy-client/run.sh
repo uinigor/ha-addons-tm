@@ -5,7 +5,7 @@ TOKEN=$(grep -oP '(?<="token": ")[^"]*' /data/options.json)
 
 echo "[Info] Настройка Cloud Proxy TM..."
 
-# Генерируем TOML (строго по спецификации v0.58.1)
+# Используем Inline Table для metas — это решает проблему "unknown field"
 cat <<EOF > /tmp/frpc.toml
 serverAddr = "192.168.1.211"
 serverPort = 7000
@@ -16,12 +16,10 @@ type = "http"
 localIP = "172.30.32.1"
 localPort = 8123
 customDomains = ["client.ha.local"]
-# В v0.58.1 метаданные внутри прокси пишутся так:
-[proxies.metas]
-authToken = "${TOKEN}"
+metas = { authToken = "${TOKEN}" }
 EOF
 
-echo "[Info] Подключение к серверу..."
+echo "[Info] Соединение с сервером..."
 
 # Запуск
 exec /usr/bin/frpc -c /tmp/frpc.toml
