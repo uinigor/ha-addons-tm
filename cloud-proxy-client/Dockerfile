@@ -3,7 +3,8 @@ FROM homeassistant/amd64-base:latest
 # Твой локальный сервер
 ARG REPO_URL="http://192.168.1.211:8081/frp/"
 
-RUN apt-get update && apt-get install -y wget ca-certificates \
+# 1. Используем apk вместо apt-get
+RUN apk add --no-cache wget ca-certificates tar \
     && ARCH=$(uname -m) \
     && if [ "$ARCH" = "x86_64" ]; then FRP_ARCH="amd64"; \
        elif [ "$ARCH" = "aarch64" ]; then FRP_ARCH="arm64"; \
@@ -15,11 +16,10 @@ RUN apt-get update && apt-get install -y wget ca-certificates \
     && rm -rf /tmp/frp* \
     && apk del wget tar
 
-# Копируем скрипт запуска
+# 2. Копируем скрипт запуска
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-# ВАЖНО: В образах HA на базе s6-overlay скрипт запуска 
-# ДОЛЖЕН вызываться через CMD без указания ENTRYPOINT
+# 3. Сбрасываем ENTRYPOINT и запускаем через CMD, чтобы избежать ошибки PID 1
 ENTRYPOINT []
 CMD [ "/run.sh" ]
