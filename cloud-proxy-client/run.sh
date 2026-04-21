@@ -3,25 +3,21 @@
 # Читаем токен
 TOKEN=$(grep -oP '(?<="token": ")[^"]*' /data/options.json)
 
-echo "[Info] Настройка Cloud Proxy TM (YAML mode)..."
+echo "[Info] Настройка Cloud Proxy (Safe Mode)..."
 
-# Генерируем YAML конфиг
-cat <<EOF > /tmp/frpc.yaml
-serverAddr: "192.168.1.211"
-serverPort: 7000
+# Генерируем конфиг БЕЗ поля metas
+# Токен упаковываем в имя прокси через разделитель "_"
+cat <<EOF > /tmp/frpc.toml
+serverAddr = "192.168.1.211"
+serverPort = 7000
 
-proxies:
-  - name: "ha-proxy"
-    type: "http"
-    localIP: "172.30.32.1"
-    localPort: 8123
-    customDomains:
-      - "client.ha.local"
-    metas:
-      authToken: "${TOKEN}"
+[[proxies]]
+name = "ha_${TOKEN}"
+type = "http"
+localIP = "172.30.32.1"
+localPort = 8123
+customDomains = ["client.ha.local"]
 EOF
 
 echo "[Info] Подключение к серверу..."
-
-# Запуск с указанием YAML конфига
-exec /usr/bin/frpc -c /tmp/frpc.yaml
+exec /usr/bin/frpc -c /tmp/frpc.toml
