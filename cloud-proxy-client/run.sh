@@ -1,31 +1,29 @@
 #!/usr/bin/env bash
 
-# 1. Читаем токен
-TOKEN=$(bashio::config 'token')
+# 1. Читаем токен напрямую из файла настроек HA
+# (Тут мы используем простую замену, так как jq может не быть в образе)
+TOKEN=$(grep -oP '(?<="token": ")[^"]*' /data/options.json)
 
-# 2. Настройки сервера
-SERVER_ADDR="192.168.1.211"
-SERVER_PORT=7000
+echo "[Info] Настройка Cloud Proxy TM..."
 
-bashio::log.info "Запуск Cloud Proxy TM..."
-
-# 3. Генерация конфига (строго под версию 0.58.1)
+# 2. Генерация конфига в формате TOML (Исправленный формат для v0.58.1)
 cat <<EOF > /tmp/frpc.toml
-serverAddr = "${SERVER_ADDR}"
-serverPort = ${SERVER_PORT}
+serverAddr = "192.168.1.211"
+serverPort = 7000
 
 [[proxies]]
-name = "ha-client-proxy"
+name = "ha-proxy"
 type = "http"
 localIP = "172.30.32.1"
 localPort = 8123
 customDomains = ["client.ha.local"]
 
+# В TOML метаданные для конкретного прокси пишутся так:
 [proxies.metas]
 authToken = "${TOKEN}"
 EOF
 
-bashio::log.info "Подключение к серверу ${SERVER_ADDR} с токеном: ${TOKEN:0:5}..."
+echo "[Info] Подключение к серверу с токеном: ${TOKEN:0:5}..."
 
-# 4. Запуск frpc
+# 3. Запуск frpc
 exec /usr/bin/frpc -c /tmp/frpc.toml
