@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 
-# 1. Читаем токен напрямую из файла настроек HA
-# (Тут мы используем простую замену, так как jq может не быть в образе)
+# Читаем токен
 TOKEN=$(grep -oP '(?<="token": ")[^"]*' /data/options.json)
 
 echo "[Info] Настройка Cloud Proxy TM..."
 
-# 2. Генерация конфига в формате TOML (Исправленный формат для v0.58.1)
+# Генерируем TOML (строго по спецификации v0.58.1)
 cat <<EOF > /tmp/frpc.toml
 serverAddr = "192.168.1.211"
 serverPort = 7000
@@ -17,13 +16,12 @@ type = "http"
 localIP = "172.30.32.1"
 localPort = 8123
 customDomains = ["client.ha.local"]
-
-# В TOML метаданные для конкретного прокси пишутся так:
+# В v0.58.1 метаданные внутри прокси пишутся так:
 [proxies.metas]
 authToken = "${TOKEN}"
 EOF
 
-echo "[Info] Подключение к серверу с токеном: ${TOKEN:0:5}..."
+echo "[Info] Подключение к серверу..."
 
-# 3. Запуск frpc
+# Запуск
 exec /usr/bin/frpc -c /tmp/frpc.toml
