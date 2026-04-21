@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bashio
+#!/usr/bin/env bash
 
 # 1. Читаем токен
 TOKEN=$(bashio::config 'token')
