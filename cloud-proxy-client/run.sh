@@ -8,7 +8,7 @@ echo "[Info] Настройка Cloud Proxy (Safe Mode)..."
 # Генерируем конфиг БЕЗ поля metas
 # Токен упаковываем в имя прокси через разделитель "_"
 cat <<EOF > /tmp/frpc.toml
-serverAddr = "192.168.1.211"
+serverAddr = "192.168.1.214"
 serverPort = 7000
 
 [[proxies]]
