@@ -1,7 +1,7 @@
 FROM homeassistant/amd64-base:latest
 
 # Твой локальный сервер
-ARG REPO_URL="http://192.168.1.214:8081/frp/"
+ARG REPO_URL="http://smart.net.tm:8081/frp/"
 
 # Добавляем grep для парсинга токена
 RUN apk add --no-cache wget ca-certificates tar grep \
