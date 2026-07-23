@@ -11,7 +11,7 @@ RUN apk add --no-cache wget ca-certificates tar grep \
        elif [ "${TARGETARCH}" = "arm64" ]; then FRP_ARCH="linux_arm64"; \
        elif [ "${TARGETARCH}" = "arm" ]; then FRP_ARCH="linux_arm"; \
        else echo "Unsupported architecture: ${TARGETARCH}" && exit 1; fi \
-    && wget --no-check-certificate "https://github.com/fatedier/frp/releases/download/v0.58.1/frp_0.58.1_linux_{ARCH}.tar.gz" -O /tmp/frp.tar.gz \
+    && wget --no-check-certificate "https://github.com/fatedier/frp/releases/download/v0.58.1/frp_0.58.1_{FRP_ARCH}.tar.gz" -O /tmp/frp.tar.gz \
     && tar -xzf /tmp/frp.tar.gz -C /tmp/ \
     && mv /tmp/frp_0.58.1_${FRP_ARCH}/frpc /usr/bin/frpc \
     && chmod +x /usr/bin/frpc \
