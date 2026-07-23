@@ -1,17 +1,19 @@
-FROM homeassistant/amd64-base:latest
+# Использование переменной сборщика HA для автоматического выбора правильной базы
+ARG BUILD_FROM
+FROM $BUILD_FROM
 
-# Твой локальный сервер
-ARG REPO_URL="http://smart.net.tm:8081/frp/"
+# Переменная для автоматического определения архитектуры устройства (amd64 / arm64)
+ARG TARGETARCH
 
 # Добавляем grep для парсинга токена
 RUN apk add --no-cache wget ca-certificates tar grep \
-    && ARCH=$(uname -m) \
-    && if [ "$ARCH" = "x86_64" ]; then FRP_ARCH="amd64"; \
-       elif [ "$ARCH" = "aarch64" ]; then FRP_ARCH="arm64"; \
-       else FRP_ARCH="amd64"; fi \
-    && wget --no-check-certificate ${REPO_URL}frp_0.58.1_linux_${FRP_ARCH}.tar.gz -O /tmp/frp.tar.gz \
+    && if [ "${TARGETARCH}" = "amd64" ]; then FRP_ARCH="linux_amd64"; \
+       elif [ "${TARGETARCH}" = "arm64" ]; then FRP_ARCH="linux_arm64"; \
+       elif [ "${TARGETARCH}" = "arm" ]; then FRP_ARCH="linux_arm"; \
+       else echo "Unsupported architecture: ${TARGETARCH}" && exit 1; fi \
+    && wget --no-check-certificate "https://github.com{FRP_ARCH}.tar.gz" -O /tmp/frp.tar.gz \
     && tar -xzf /tmp/frp.tar.gz -C /tmp/ \
-    && mv /tmp/frp_0.58.1_linux_${FRP_ARCH}/frpc /usr/bin/frpc \
+    && mv /tmp/frp_0.58.1_${FRP_ARCH}/frpc /usr/bin/frpc \
     && chmod +x /usr/bin/frpc \
     && rm -rf /tmp/frp* \
     && apk del wget tar
