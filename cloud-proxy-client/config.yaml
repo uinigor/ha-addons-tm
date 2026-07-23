@@ -1,5 +1,5 @@
 name: "Cloud Proxy Client (TM)"
-version: "2.0.1"
+version: "2.0.2"
 slug: "cloud-proxy-client"
 description: "Удаленный доступ для HA (На территории Туркменистана). ВАЖНО: Добавьте в configuration.yaml: http: { use_x_forwarded_for: true, trusted_proxies: [172.0.0.0/8] }"
 arch:
